@@ -13,7 +13,6 @@ export default function ModelViewer({ attributes, setViewer }) {
   useEffect(() => {
     if (ref.current) {
       const instance = ref.current.querySelector("model-viewer");
-      window.viewer = instance;
       setViewer(instance);
     }
 
@@ -32,8 +31,6 @@ export default function ModelViewer({ attributes, setViewer }) {
     }
     setEnableOptions(attributes);
   }, [attrs]);
-
-  console.log(model.model_url);
 
   return (
     <>

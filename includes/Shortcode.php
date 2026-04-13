@@ -33,7 +33,12 @@ class Shortcode{
         extract($attrs);
 
         if($id !== null){
-            $id = esc_html($id);
+            $id = absint($id);
+
+            if(!current_user_can('read_post', $id)){
+                return '';
+            }
+
             $post_type = get_post_type($id);
 
             if($post_type !== 'a3dmv-viewer'){
@@ -65,8 +70,8 @@ class Shortcode{
                 'align' => esc_attr($align),
                 'alignment' => esc_attr($alignment),
                 'model' => [
-                    'model_url' => $model_url,
-                    'poster_url' => $poster_url,
+                    'model_url' => esc_url_raw($model_url),
+                    'poster_url' => esc_url_raw($poster_url),
                 ],
                 'attrs' => [
                     'auto-rotate' => $auto_rotate === 'true',
