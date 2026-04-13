@@ -6,7 +6,12 @@ import ModelViewer from "../../components/ModelViewer/ModelViewer";
 document.addEventListener("DOMContentLoaded", function () {
   const viewers = document.querySelectorAll(".wp-block-a3dmv");
   viewers.forEach((viewer) => {
-    const attributes = JSON.parse(viewer.dataset.attributes);
+    let attributes;
+    try {
+      attributes = JSON.parse(viewer.dataset.attributes);
+    } catch (e) {
+      return; // Skip malformed blocks
+    }
     viewer.removeAttribute("data-attributes");
 
     const root = createRoot(viewer);

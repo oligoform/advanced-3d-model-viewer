@@ -62,7 +62,18 @@ class Shortcode{
 
     public function generate_advanced_model_viewer_to_block($attrs){
         extract($attrs);
-        
+
+        // Whitelist the loading attribute value
+        $allowed_loading = array('eager', 'lazy', 'auto');
+        $safe_loading = in_array($loading, $allowed_loading, true) ? $loading : 'eager';
+
+        // Validate CSS dimensions (e.g. "400px", "100%", "50vh")
+        $safe_height = preg_match('/^\d+(\.\d+)?(px|%|vh|vw|em|rem|pt|cm|mm|in)$/', trim($height)) ? trim($height) : '400px';
+        $safe_width  = preg_match('/^\d+(\.\d+)?(px|%|vh|vw|em|rem|pt|cm|mm|in)$/', trim($width)) ? trim($width) : '100%';
+
+        // Validate CSS color (hex, named color, rgb/rgba/hsl/hsla, or transparent)
+        $safe_bg_color = preg_match('/^(#[0-9a-fA-F]{3,8}|[a-zA-Z]+|(rgb|rgba|hsl|hsla)\([^)]*\)|transparent)$/', trim($bg_color)) ? trim($bg_color) : 'transparent';
+
         return [
             'blockName' => 'a3dmv/model-viewer',
             'attrs' => [
@@ -76,12 +87,12 @@ class Shortcode{
                 'attrs' => [
                     'auto-rotate' => $auto_rotate === 'true',
                     'camera-controls' => $mouse_interaction === 'true',
-                    'loading' => $loading
+                    'loading' => $safe_loading,
                 ],
                 'style' => [
-                    'height' => esc_html($height),
-                    'width' => esc_html($width),
-                    'bgColor' => esc_attr($bg_color),
+                    'height' => $safe_height,
+                    'width'  => $safe_width,
+                    'bgColor' => $safe_bg_color,
                 ],
                 'className' => esc_attr($class_name)
             ],
