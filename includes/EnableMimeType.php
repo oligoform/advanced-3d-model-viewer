@@ -42,7 +42,7 @@ class EnableMimeType {
             }
             $magic = fread($handle, 4);
             fclose($handle);
-            if ($magic !== 'glTF') {
+            if (false === $magic || $magic !== 'glTF') {
                 return $data;
             }
         } elseif ('gltf' === $ext) {
@@ -52,7 +52,7 @@ class EnableMimeType {
             }
             $first_byte = fread($handle, 1);
             fclose($handle);
-            if ($first_byte !== '{') {
+            if (false === $first_byte || $first_byte !== '{') {
                 return $data;
             }
         }

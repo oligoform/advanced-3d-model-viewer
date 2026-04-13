@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 
 /**
- * Strip HTML tags from a string to prevent CSS-exfiltration and markup injection
- * via the custom CSS field.
+ * Sanitize a CSS string to prevent HTML injection and style-tag break-out.
+ * Removes all HTML tags and strips bare `<` characters that could be used
+ * to inject `</style>` or `<script>` sequences.
  *
  * @param {string} input
  * @returns {string}
  */
-function stripTags(input) {
+function sanitizeCSS(input) {
   if (typeof input !== "string") return "";
-  return input.replace(/<[^>]*>/g, "");
+  // First remove complete tags, then strip any remaining `<` characters.
+  return input.replace(/<[^>]*>/g, "").replace(/</g, "");
 }
 
 export default function Style({ attributes }) {
@@ -20,7 +22,7 @@ export default function Style({ attributes }) {
     let css = `#${clientId} {width: ${style.width}; height: ${style.height}}}`;
     css += `#${clientId} {${align === "right" ? "margin-left:auto" : align === "center" ? "margin: auto" : ""}}`;
     css += `#${clientId} model-viewer{background-color: ${style.bgColor}}`;
-    css += stripTags(additional?.CSS);
+    css += sanitizeCSS(additional?.CSS);
     setCSS(css);
   }, [style, clientId, additional, align]);
 

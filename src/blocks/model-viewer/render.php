@@ -3,7 +3,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 extract($attributes );
 
 $className = $className ?? '';
-$blockClassName = 'wp-block-a3dmv ' . $className . "align".$align;
+
+$allowed_block_alignments = array( '', 'wide', 'full' );
+$safe_align = in_array( $align, $allowed_block_alignments, true ) ? $align : '';
+
+$blockClassName = 'wp-block-a3dmv ' . esc_attr( $className ) . 'align' . esc_attr( $safe_align );
 
 $allowed_alignments = array( 'left', 'center', 'right' );
 $safe_alignment = in_array( $alignment, $allowed_alignments, true ) ? $alignment : 'left';
