@@ -39,8 +39,10 @@ function sanitizeCSSColor(value) {
   const trimmed = value.trim();
   if (
     /^#[0-9a-fA-F]{3,8}$/.test(trimmed) ||
+    // Named colors are alphabetic-only; invalid names are silently ignored by browsers
     /^[a-zA-Z]+$/.test(trimmed) ||
-    /^(rgb|rgba|hsl|hsla)\([^)]*\)$/.test(trimmed)
+    // Functional notation: allow only digits, whitespace, commas, dots, slashes, percent, hyphens
+    /^(rgb|rgba|hsl|hsla)\([\d\s,./%-]+\)$/.test(trimmed)
   ) {
     return trimmed;
   }

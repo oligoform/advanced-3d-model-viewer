@@ -71,8 +71,12 @@ class Shortcode{
         $safe_height = preg_match('/^\d+(\.\d+)?(px|%|vh|vw|em|rem|pt|cm|mm|in)$/', trim($height)) ? trim($height) : '400px';
         $safe_width  = preg_match('/^\d+(\.\d+)?(px|%|vh|vw|em|rem|pt|cm|mm|in)$/', trim($width)) ? trim($width) : '100%';
 
-        // Validate CSS color (hex, named color, rgb/rgba/hsl/hsla, or transparent)
-        $safe_bg_color = preg_match('/^(#[0-9a-fA-F]{3,8}|[a-zA-Z]+|(rgb|rgba|hsl|hsla)\([^)]*\)|transparent)$/', trim($bg_color)) ? trim($bg_color) : 'transparent';
+        // Validate CSS color (hex, named color, rgb/rgba/hsl/hsla, or transparent).
+        // Named color regex accepts any alphabetic string — invalid names are silently
+        // ignored by browsers and cannot cause CSS injection.
+        // Functional notation allows only digits, whitespace, commas, dots, slashes,
+        // percent, and hyphens — preventing semicolons or braces from escaping the value.
+        $safe_bg_color = preg_match('/^(#[0-9a-fA-F]{3,8}|[a-zA-Z]+|(rgb|rgba|hsl|hsla)\([\d\s,.\/%-]+\))$/', trim($bg_color)) ? trim($bg_color) : 'transparent';
 
         return [
             'blockName' => 'a3dmv/model-viewer',
