@@ -13,16 +13,14 @@ export default function ModelViewer({ attributes, setViewer }) {
   useEffect(() => {
     if (ref.current) {
       const instance = ref.current.querySelector("model-viewer");
-      window.viewer = instance;
+      // Use namespaced global to avoid pollution
+      if (!window.a3dmv) {
+        window.a3dmv = {};
+      }
+      window.a3dmv[clientId] = instance;
       setViewer(instance);
     }
-
-    // return () => {
-    //   if (viewer) {
-    //     viewer.destroy();
-    //   }
-    // };
-  }, [attributes]);
+  }, [attributes, clientId, setViewer]);
 
   useEffect(() => {
     const attributes = Object.fromEntries(Object.entries(attrs).map(([key, value]) => [key, value ? value : undefined]));
@@ -32,8 +30,6 @@ export default function ModelViewer({ attributes, setViewer }) {
     }
     setEnableOptions(attributes);
   }, [attrs]);
-
-  console.log(model.model_url);
 
   return (
     <>

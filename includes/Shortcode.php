@@ -33,19 +33,34 @@ class Shortcode{
         extract($attrs);
 
         if($id !== null){
-            $id = esc_html($id);
+            $id = absint($id); // Ensure ID is a positive integer
+            if ($id <= 0) {
+                return '';
+            }
+
             $post_type = get_post_type($id);
 
             if($post_type !== 'a3dmv-viewer'){
-                return false;
+                return '';
             }
+
+            // Check post status and permissions to prevent private/draft post disclosure
             $post = get_post($id);
-    
-            if($post){
-                $blocks = parse_blocks($post->post_content);
-                return render_block($blocks[0]);
+
+            if(!$post){
+                return '';
             }
-            return 'something went wrong!';
+
+            // Only allow published posts or posts the current user can edit
+            if($post->post_status !== 'publish' && !current_user_can('edit_post', $id)){
+                return '';
+            }
+
+            $blocks = parse_blocks($post->post_content);
+            if(empty($blocks)){
+                return '';
+            }
+            return render_block($blocks[0]);
         }
 
         $block = $this->generate_advanced_model_viewer_to_block($attrs);
@@ -65,8 +80,8 @@ class Shortcode{
                 'align' => esc_attr($align),
                 'alignment' => esc_attr($alignment),
                 'model' => [
-                    'model_url' => $model_url,
-                    'poster_url' => $poster_url,
+                    'model_url' => esc_url_raw($model_url),
+                    'poster_url' => esc_url_raw($poster_url),
                 ],
                 'attrs' => [
                     'auto-rotate' => $auto_rotate === 'true',
