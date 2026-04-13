@@ -7,7 +7,9 @@ $className = $className ?? '';
 $allowed_block_alignments = array( '', 'wide', 'full' );
 $safe_align = in_array( $align, $allowed_block_alignments, true ) ? $align : '';
 
-$blockClassName = 'wp-block-a3dmv ' . esc_attr( $className ) . ' align' . esc_attr( $safe_align );
+$blockClassName = 'wp-block-a3dmv'
+    . ( $className ? ' ' . esc_attr( $className ) : '' )
+    . ( $safe_align ? ' align' . esc_attr( $safe_align ) : '' );
 
 $allowed_alignments = array( 'left', 'center', 'right' );
 $safe_alignment = in_array( $alignment, $allowed_alignments, true ) ? $alignment : 'left';
